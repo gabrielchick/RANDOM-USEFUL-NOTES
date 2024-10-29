@@ -1,0 +1,327 @@
+Useful notes for assessment, save to git in some readme later
+
+
+
+==FILE READING, WRITING, FILE SORTING (WS1/3, baccarat, csv homework)
+import java.io.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class FileProcessor {
+
+    // Method to read lines from a text file
+    public List<String> readLines(String filename) {
+        List<String> lines = new ArrayList<>(); // List to store the lines
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) { // Read until the end of the file
+                lines.add(line); // Add each line to the list
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Print any IO exceptions
+        }
+        return lines; // Return the list of lines
+    }
+
+    // Method to write lines to a text file
+    public void writeLines(String filename, List<String> lines) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String line : lines) { // Loop through each line
+                writer.write(line); // Write the line to the file
+                writer.newLine(); // Add a newline after each line
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Print any IO exceptions
+        }
+    }
+
+    // Method to aggregate line occurrences
+    public Map<String, Long> countOccurrences(List<String> lines) {
+        return lines.stream()
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())); // Count occurrences of each line
+    }
+
+    // Method to sort lines alphabetically
+    public List<String> sortLines(List<String> lines) {
+        return lines.stream()
+            .sorted() // Sort the lines
+            .collect(Collectors.toList()); // Collect the sorted lines into a list
+    }
+
+    // Method to filter lines based on a keyword
+    public List<String> filterLines(List<String> lines, String keyword) {
+        return lines.stream()
+            .filter(line -> line.contains(keyword)) // Keep only lines containing the keyword
+            .collect(Collectors.toList()); // Collect filtered lines into a list
+    }
+
+    // Method to change case to upper or lower
+    public List<String> changeCase(List<String> lines, boolean toUpperCase) {
+        return lines.stream()
+            .map(line -> toUpperCase ? line.toUpperCase() : line.toLowerCase()) // Change case based on parameter
+            .collect(Collectors.toList()); // Collect the modified lines
+    }
+
+    // Method to clean lines (trim whitespace)
+    public List<String> cleanLines(List<String> lines) {
+        return lines.stream()
+            .map(String::trim) // Trim whitespace from each line
+            .filter(line -> !line.isEmpty()) // Remove empty lines
+            .collect(Collectors.toList()); // Collect cleaned lines
+    }
+
+    // Method to count unique words in a list of lines
+    public Map<String, Long> countUniqueWords(List<String> lines) {
+        return Arrays.stream(String.join(" ", lines).split("\\W+")) // Join lines and split by non-word characters
+            .filter(word -> !word.isEmpty()) // Filter out empty words
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())); // Count unique words
+    }
+
+    // Example method to process a file (read, clean, filter, sort, and write)
+    public void processFile(String inputFile, String outputFile, String keyword) {
+        List<String> lines = readLines(inputFile); // Read lines from the input file
+        lines = cleanLines(lines); // Clean lines (trim whitespace)
+        List<String> filteredLines = filterLines(lines, keyword); // Filter lines by keyword
+        List<String> sortedLines = sortLines(filteredLines); // Sort the filtered lines
+        writeLines(outputFile, sortedLines); // Write the sorted lines to the output file
+    }
+
+    public static void main(String[] args) {
+        FileProcessor processor = new FileProcessor();
+        String inputFile = "input.txt"; // Example input file
+        String outputFile = "output.txt"; // Example output file
+        String keyword = "example"; // Example keyword for filtering
+
+        processor.processFile(inputFile, outputFile, keyword); // Process the file
+
+        // Additional usage examples
+        List<String> lines = processor.readLines(inputFile);
+        Map<String, Long> uniqueWordCounts = processor.countUniqueWords(lines); // Count unique words
+        System.out.println("Unique word counts: " + uniqueWordCounts); // Print unique word counts
+
+        List<String> upperCaseLines = processor.changeCase(lines, true); // Change to upper case
+        processor.writeLines("uppercase_output.txt", upperCaseLines); // Write upper case lines to a new file
+    }
+}
+
+
+
+==SERVER CLIENT (day 4, ws4/6)
+
+==GOL/TICTAC/BOARD/LOOP/ARRAY
+
+
+==STATIC MEANING/USAGE
+A static method belongs to the class, not to any specific instance of the class.
+Static methods can access only static data directly, and they cannot call non-static methods directly.
+Static methods are called using the class name instead of an instance.
+
+public class Utility {
+    public static int add(int a, int b) {
+        return a + b;
+    }
+}
+// Calling static method
+int sum = Utility.add(5, 10);  // No instance of Utility is needed
+
+(MEANING, DONT NEED THIS ----->>>>> Utility utilityInstance = new Utility();)
+
+==USEFUL PACKAGES AND COMMANDS
+javac -d classes --source-path src src\calc\Calculator.java (src <path including the other src><file.java>
+java -cp classes calc.Calculator (java -cp classes package.file)   
+java -cp classes network.Server 8080  // Server listens on port 8080 (**run server first!)
+java -cp classes network.Client localhost 8080  // Client connects to localhost on port 8080
+
+jar cfe classes/CalculatorApp.jar calc.Calculator -C classes .
+java -jar classes/CalculatorApp.jar
+
+
+
+
+Loop Arrays Collections
+import java.util.Arrays;            // For arrays, sorting, searching, filling, etc.
+import java.util.List;              // For list interfaces
+import java.util.ArrayList;         // Common implementation of List
+import java.util.LinkedList;        // For linked list data structure
+import java.util.Map;               // For key-value pairs
+import java.util.HashMap;           // Common implementation of Map
+import java.util.TreeMap;           // For sorted Map based on keys
+import java.util.Set;               // For set interface
+import java.util.HashSet;           // Common implementation of Set
+import java.util.TreeSet;           // For sorted Set
+import java.util.Iterator;          // For iterating over collections
+import java.util.Collections;       // For utility functions on collections (sorting, reversing, etc.)
+import java.util.Comparator;        // For custom sorting logic
+
+
+File Reading, Writing, Filtering, Aggregating
+import java.io.File;                // Represents a file or directory path
+import java.io.FileReader;          // For reading files as characters
+import java.io.FileWriter;          // For writing to files as characters
+import java.io.BufferedReader;      // For efficient reading from files
+import java.io.BufferedWriter;      // For efficient writing to files
+import java.io.IOException;         // For handling input-output exceptions
+import java.nio.file.Files;         // For file and directory operations
+import java.nio.file.Path;          // Represents a file path
+import java.nio.file.Paths;         // For path operations
+import java.nio.file.StandardOpenOption; // For specifying file open options
+import java.util.stream.Stream;     // For filtering, aggregating, and processing files as streams
+
+Server/Client Networking
+import java.net.ServerSocket;       // For creating a server socket
+import java.net.Socket;             // For client socket connections
+import java.net.InetAddress;        // For working with IP addresses
+import java.io.InputStream;         // For reading data from sockets
+import java.io.OutputStream;        // For writing data to sockets
+import java.io.PrintWriter;         // For sending text data over sockets
+import java.io.BufferedReader;      // For reading text data from sockets
+
+
+
+
+Multithreading
+import java.lang.Thread;            // For creating new threads
+import java.lang.Runnable;          // For implementing multithreaded tasks
+import java.util.concurrent.ExecutorService;    // For managing thread pools
+import java.util.concurrent.Executors;          // For creating thread pools
+import java.util.concurrent.Callable;           // For tasks that return results
+import java.util.concurrent.Future;             // For handling asynchronous task results
+import java.util.concurrent.TimeUnit;           // For time units in thread management
+import java.util.concurrent.locks.Lock;         // For explicit locking mechanisms
+import java.util.concurrent.locks.ReentrantLock;// Common implementation of Lock
+
+
+Recursion and Minimax
+import java.util.Stack;             // Useful for recursive problems where stack tracking is needed
+import java.util.Queue;             // For breadth-first search (BFS) implementations
+import java.util.PriorityQueue;     // For problems requiring sorted queue behavior (e.g., A* algorithm)
+
+
+
+==EXCEPTION HANDLING FINALLY (NEED FINALLY TO CONTINUE RUNNING AFTER ERROR/EXCEPTION)
+package day05;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        OpenFile f = new OpenFile();
+
+        try {
+            //f.openFile(args[0]);
+            f.openFile2(args[0]);
+            System.out.println("Completed !");
+
+        } catch (MyAppException ex) {
+            System.err.println(ex.getMessage());
+            System.err.println(ex.getTotalBytesRead());
+            System.out.println("--------------------");
+            ex.printStackTrace();
+        } finally {
+            System.out.printf("\nI am in the finally block\n");
+
+
+
+
+
+==more  on files==========================
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RemoveLines {
+
+    // Method to remove lines containing a specific word from a text file
+    public void removeLinesContaining(String filename, String word) {
+        List<String> lines = new ArrayList<>(); // List to store the remaining lines
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.contains(word)) { // Check if the line does not contain the word
+                    lines.add(line); // Add the line to the list if it doesn't contain the word
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Print any IO exceptions
+        }
+
+        // Write the remaining lines back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String line : lines) {
+                writer.write(line); // Write each remaining line
+                writer.newLine(); // Add a newline after each line
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Print any IO exceptions
+        }
+    }
+
+    public static void main(String[] args) {
+        RemoveLines remover = new RemoveLines();
+        String filename = "input.txt"; // The input file name
+        String wordToRemove = "red"; // The word to check for
+
+        remover.removeLinesContaining(filename, wordToRemove); // Remove lines containing the word "red"
+        System.out.println("Lines containing '" + wordToRemove + "' have been removed from " + filename);
+    }
+}
+
+==PUSHING CODE TO GIT
+
+git init
+git status                    # Check modified files
+git add filename.txt          # Stage a specific file
+# or
+git add .                     # Stage all changes
+git commit -m "Update the file"  # Commit with a message
+git remote add origin <link>
+git push origin master        # Push changes to remote
+
+
+# Undo Uncommitted Changes
+git checkout -- filename.txt          # Discard changes in a specific file
+git checkout -- .                      # Discard all uncommitted changes
+
+# Unstage Files	
+git reset filename.txt                 # Unstage a specific file
+git reset                              # Unstage all files
+
+# Edit the Last Commit
+git commit --amend -m "New commit message"  # Modify the last commit
+
+# Revert Changes After Committing
+git revert <commit_id>                 # Undo a previous commit with a new commit
+
+# Remove a Commit
+git reset --hard <commit_id>           # Reset to a previous commit (changes history)
+git reset --soft <commit_id>           # Soft reset to keep changes in the working tree
+
+# Check Commit History
+git log                                # View commit history
+git log --oneline                       # View a more concise log
+
+# Check Differences
+git diff                               # See differences between staged and working directory
+git diff HEAD                          # See differences between the last commit and working directory
+
+# Remove Files from the Repository
+git rm filename.txt                    # Delete a file from the repository
+
+# Restore a Deleted File
+git checkout HEAD -- filename.txt      # Restore a deleted file from the last commit
+
+# Force Push (use with caution)
+git push origin master --force         # Force push changes to a remote repository
+
+
+
+==GITIGNORE
+Both .gitignore structures serve specific purposes, but generally:
+
+The first structure (/bin/** */) is beneficial if you need to ignore all content in a specific directory (/bin) and its subdirectories. This structure is helpful if your project has a dedicated directory where all generated or temporary files are stored. Using this approach keeps your .gitignore simpler, as you only specify the top-level directory.
+
+The second structure (*.class, *.log, classes/) is more granular and focuses on specific file types and directories. This setup is useful if generated files or logs are scattered in various parts of your project and not centralized in a single directory. It allows more flexibility, as you can ignore specific file types or directories across the entire project.
