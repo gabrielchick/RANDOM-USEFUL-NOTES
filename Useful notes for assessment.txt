@@ -274,11 +274,11 @@ public class RemoveLines {
 
 git init
 git status                    # Check modified files
+git remote add origin <link>
 git add filename.txt          # Stage a specific file
 # or
 git add .                     # Stage all changes
 git commit -m "Update the file"  # Commit with a message
-git remote add origin <link>
 git push origin master        # Push changes to remote
 
 
